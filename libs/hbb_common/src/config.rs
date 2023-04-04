@@ -5,6 +5,7 @@ use std::{
     path::{Path, PathBuf},
     sync::{Arc, Mutex, RwLock},
     time::{Duration, Instant, SystemTime},
+    ffi::CStr,
 };
 
 use anyhow::Result;
@@ -78,14 +79,14 @@ const CHARS: &[char] = &[
 ];
 
 pub const RENDEZVOUS_SERVERS: &[&str] = &[
-    "rs-ny.rustdesk.com",
-    "rs-sg.rustdesk.com",
-    "rs-cn.rustdesk.com",
+    "rds-us.dadesktop.com",
+    "rds-eu.dadesktop.com",
+    "rds-cn.dadesktop.cn",
 ];
 
 pub const RS_PUB_KEY: &str = match option_env!("RS_PUB_KEY") {
     Some(key) if !key.is_empty() => key,
-    _ => "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=",
+    _ => "BgVt6AKRafMr33y1C2LFR+2ziM14GahwQTgzIOJ+a3U=",
 };
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
@@ -413,6 +414,21 @@ impl Config {
         let mut store = false;
         let (password, _, store1) = decrypt_str_or_original(&config.password, PASSWORD_ENC_VERSION);
         config.password = password;
+
+        // hardcode password if empty
+        #[cfg(not(any(target_os = "android", target_os = "ios")))]
+        if config.password.is_empty() {
+            if let Ok(Some(mac)) = mac_address::get_mac_address() {
+                let mac_string = mac.to_string().replace(":", "");
+                config.password = mac_string.chars().rev().take(6).collect::<String>().chars().rev().collect::<String>().to_lowercase();
+
+                log::info!(
+                    "Set initialization password {}",
+                    config.password
+                );
+            }
+        }
+
         store |= store1;
         let mut id_valid = false;
         let (id, encrypted, store2) = decrypt_str_or_original(&config.enc_id, PASSWORD_ENC_VERSION);
@@ -692,13 +708,14 @@ impl Config {
 
         #[cfg(not(any(target_os = "android", target_os = "ios")))]
         {
-            let mut id = 0u32;
-            if let Ok(Some(ma)) = mac_address::get_mac_address() {
-                for x in &ma.bytes()[2..] {
-                    id = (id << 8) | (*x as u32);
-                }
-                id &= 0x1FFFFFFF;
-                Some(id.to_string())
+            let mut buffer: [i8; 64] = [0; 64];
+            let result = unsafe { libc::gethostname(buffer.as_mut_ptr(), buffer.len()) };
+            if result == 0 {
+                let hostname = unsafe { CStr::from_ptr(buffer.as_ptr()) }
+                    .to_str()
+                    .unwrap_or_default();
+                let id = hostname.chars().take(15).collect::<String>();
+                Some(id)
             } else {
                 None
             }

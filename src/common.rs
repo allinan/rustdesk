@@ -576,36 +576,39 @@ pub fn is_modifier(evt: &KeyEvent) -> bool {
 }
 
 pub fn check_software_update() {
-    std::thread::spawn(move || allow_err!(check_software_update_()));
+    // std::thread::spawn(move || allow_err!(check_software_update_()));
+    log::info!(
+        "Ignore check software update"
+    );
 }
 
-#[tokio::main(flavor = "current_thread")]
-async fn check_software_update_() -> hbb_common::ResultType<()> {
-    sleep(3.).await;
+// #[tokio::main(flavor = "current_thread")]
+// async fn check_software_update_() -> hbb_common::ResultType<()> {
+//     sleep(3.).await;
 
-    let rendezvous_server = format!("rs-sg.rustdesk.com:{}", config::RENDEZVOUS_PORT);
-    let (mut socket, rendezvous_server) =
-        socket_client::new_udp_for(&rendezvous_server, RENDEZVOUS_TIMEOUT).await?;
+//     let rendezvous_server = format!("rds.dadesktop.com:{}", config::RENDEZVOUS_PORT);
+//     let (mut socket, rendezvous_server) =
+//         socket_client::new_udp_for(&rendezvous_server, RENDEZVOUS_TIMEOUT).await?;
 
-    let mut msg_out = RendezvousMessage::new();
-    msg_out.set_software_update(SoftwareUpdate {
-        url: crate::VERSION.to_owned(),
-        ..Default::default()
-    });
-    socket.send(&msg_out, rendezvous_server).await?;
-    use hbb_common::protobuf::Message;
-    if let Some(Ok((bytes, _))) = socket.next_timeout(30_000).await {
-        if let Ok(msg_in) = RendezvousMessage::parse_from_bytes(&bytes) {
-            if let Some(rendezvous_message::Union::SoftwareUpdate(su)) = msg_in.union {
-                let version = hbb_common::get_version_from_url(&su.url);
-                if get_version_number(&version) > get_version_number(crate::VERSION) {
-                    *SOFTWARE_UPDATE_URL.lock().unwrap() = su.url;
-                }
-            }
-        }
-    }
-    Ok(())
-}
+//     let mut msg_out = RendezvousMessage::new();
+//     msg_out.set_software_update(SoftwareUpdate {
+//         url: crate::VERSION.to_owned(),
+//         ..Default::default()
+//     });
+//     socket.send(&msg_out, rendezvous_server).await?;
+//     use hbb_common::protobuf::Message;
+//     if let Some(Ok((bytes, _))) = socket.next_timeout(30_000).await {
+//         if let Ok(msg_in) = RendezvousMessage::parse_from_bytes(&bytes) {
+//             if let Some(rendezvous_message::Union::SoftwareUpdate(su)) = msg_in.union {
+//                 let version = hbb_common::get_version_from_url(&su.url);
+//                 if get_version_number(&version) > get_version_number(crate::VERSION) {
+//                     *SOFTWARE_UPDATE_URL.lock().unwrap() = su.url;
+//                 }
+//             }
+//         }
+//     }
+//     Ok(())
+// }
 
 pub fn get_app_name() -> String {
     hbb_common::config::APP_NAME.read().unwrap().clone()
