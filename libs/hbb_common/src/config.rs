@@ -84,7 +84,8 @@ const CHARS: &[char] = &[
 
 pub const RENDEZVOUS_SERVERS: &[&str] = &[
     "rds-us.dadesktop.com",
-    "rds-eu.dadesktop.com",
+    "rds-pl.dadesktop.com",
+    "rds-my.dadesktop.com",
     "rds-cn.dadesktop.cn",
 ];
 
