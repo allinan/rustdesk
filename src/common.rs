@@ -20,12 +20,12 @@ use hbb_common::{
     allow_err,
     compress::compress as compress_func,
     config::{self, Config, COMPRESS_LEVEL, RENDEZVOUS_TIMEOUT},
-    get_version_number, log,
+    log,
     message_proto::*,
     protobuf::Enum,
     protobuf::Message as _,
     rendezvous_proto::*,
-    sleep, socket_client, tokio, ResultType,
+    socket_client, tokio, ResultType,
 };
 // #[cfg(any(target_os = "android", target_os = "ios", feature = "cli"))]
 use hbb_common::{config::RENDEZVOUS_PORT, futures::future::join_all};

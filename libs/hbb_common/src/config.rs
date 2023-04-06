@@ -5,9 +5,9 @@ use std::{
     path::{Path, PathBuf},
     sync::{Arc, Mutex, RwLock},
     time::{Duration, Instant, SystemTime},
-    ffi::CStr,
 };
 
+use gethostname::gethostname;
 use anyhow::Result;
 use rand::Rng;
 use regex::Regex;
@@ -712,17 +712,10 @@ impl Config {
 
         #[cfg(not(any(target_os = "android", target_os = "ios")))]
         {
-            let mut buffer: [i8; 64] = [0; 64];
-            let result = unsafe { libc::gethostname(buffer.as_mut_ptr(), buffer.len()) };
-            if result == 0 {
-                let hostname = unsafe { CStr::from_ptr(buffer.as_ptr()) }
-                    .to_str()
-                    .unwrap_or_default();
-                let id = hostname.chars().take(15).collect::<String>();
-                Some(id)
-            } else {
-                None
-            }
+            let hostname_os_string = gethostname();
+            let hostname = hostname_os_string.to_str().unwrap_or_default();
+            let id = hostname.chars().take(15).collect::<String>();
+            Some(id)
         }
     }
 

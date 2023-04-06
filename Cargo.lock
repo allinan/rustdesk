@@ -2785,6 +2785,7 @@ dependencies = [
  "flexi_logger",
  "futures",
  "futures-util",
+ "gethostname",
  "lazy_static",
  "libc",
  "log",
