@@ -715,7 +715,7 @@ impl Config {
         {
             let hostname_os_string = gethostname();
             let hostname = hostname_os_string.to_str().unwrap_or_default();
-            let id = hostname.chars().collect::<String>();
+            let id = hostname.to_string();
             Some(id)
         }
     }
