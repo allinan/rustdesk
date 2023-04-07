@@ -158,7 +158,7 @@ export default class Connection {
 
   async secure(pk: Uint8Array | undefined) {
     if (pk) {
-      const RS_PK = "BgVt6AKRafMr33y1C2LFR+2ziM14GahwQTgzIOJ+a3U=";
+      const RS_PK = "JG0O3lqeYbTrkkhgkUZqnyuAIfThUDzzijBMAeOhf7s=";
       try {
         pk = await globals.verify(pk, localStorage.getItem("key") || RS_PK);
         if (pk) {
