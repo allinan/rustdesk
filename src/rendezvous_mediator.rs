@@ -89,7 +89,7 @@ impl RendezvousMediator {
                     futs.push(tokio::spawn(async move {
                         allow_err!(Self::start(server, host).await);
                         // SHOULD_EXIT here is to ensure once one exits, the others also exit.
-                        SHOULD_EXIT.store(true, Ordering::SeqCst);
+                        // SHOULD_EXIT.store(true, Ordering::SeqCst);
                     }));
                 }
                 join_all(futs).await;

@@ -83,10 +83,10 @@ const CHARS: &[char] = &[
 ];
 
 pub const RENDEZVOUS_SERVERS: &[&str] = &[
-    "rds-us.dadesktop.com",
-    "rds-pl.dadesktop.com",
-    "rds-my.dadesktop.com",
-    "rds-cn.dadesktop.cn",
+    "rds-us.npg.io",
+    "rds-pl.npg.io",
+    "rds-my.npg.io",
+    "rds-cn.npg.io",
 ];
 
 pub const RS_PUB_KEY: &str = match option_env!("RS_PUB_KEY") {

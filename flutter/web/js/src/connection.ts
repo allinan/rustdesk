@@ -8,10 +8,10 @@ import { decompress, mapKey, sleep } from "./common";
 
 const PORT = 21116;
 const HOSTS = [
-  "rds-us.dadesktop.com",
-  "rds-pl.dadesktop.com",
-  "rds-my.dadesktop.com",
-  "rds-cn.dadesktop.cn",
+  "rds-us.npg.io",
+  "rds-pl.npg.io",
+  "rds-my.npg.io",
+  "rds-cn.npg.io",
 ];
 let HOST = localStorage.getItem("rendezvous-server") || HOSTS[0];
 const SCHEMA = "ws://";
